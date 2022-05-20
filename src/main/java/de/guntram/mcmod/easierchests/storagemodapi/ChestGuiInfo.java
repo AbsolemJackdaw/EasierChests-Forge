@@ -5,13 +5,13 @@
  */
 package de.guntram.mcmod.easierchests.storagemodapi;
 
-import net.minecraft.screen.ScreenHandler;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 
 /**
  *
  * @author gbl
  */
 public interface ChestGuiInfo {
-    public int getRows(ScreenHandler handler);
-    public int getColumns(ScreenHandler handler);
+    public int getRows(AbstractContainerMenu handler);
+    public int getColumns(AbstractContainerMenu handler);
 }

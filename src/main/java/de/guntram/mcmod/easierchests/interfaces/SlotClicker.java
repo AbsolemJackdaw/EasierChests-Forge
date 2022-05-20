@@ -5,8 +5,8 @@
  */
 package de.guntram.mcmod.easierchests.interfaces;
 
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.Slot;
 
 
 /**
@@ -14,7 +14,7 @@ import net.minecraft.screen.slot.SlotActionType;
  * @author gbl
  */
 public interface SlotClicker {
-    public void EasierChests$onMouseClick(Slot slot, int invSlot, int button, SlotActionType slotActionType);
+    public void EasierChests$onMouseClick(Slot slot, int invSlot, int button, ClickType slotActionType);
     public int EasierChests$getPlayerInventoryStartIndex();
     public int EasierChests$playerInventoryIndexFromSlotIndex(int slot);
     public int EasierChests$slotIndexfromPlayerInventoryIndex(int slot);

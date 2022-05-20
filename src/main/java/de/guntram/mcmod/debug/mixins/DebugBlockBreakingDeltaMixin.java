@@ -5,11 +5,11 @@
  */
 package de.guntram.mcmod.debug.mixins;
 
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.BlockView;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -20,22 +20,22 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  * @author gbl
  */
 
-@Mixin(AbstractBlock.class)
+@Mixin(BlockBehaviour.class)
 
 public class DebugBlockBreakingDeltaMixin {
-    @Inject(method="calcBlockBreakingDelta", at=@At(value="HEAD"))
-    public void debugBlockBreakDelta(BlockState state, PlayerEntity player, BlockView world, BlockPos pos, CallbackInfoReturnable ci)
+    @Inject(method="getDestroyProgress", at=@At(value="HEAD"))
+    public void debugBlockBreakDelta(BlockState state, Player player, BlockGetter world, BlockPos pos, CallbackInfoReturnable ci)
     {
-        float f = state.getHardness(world, pos);
-        int i = player.canHarvest(state) ? 30 : 100;
-        float result = player.getBlockBreakingSpeed(state) / f / (float)i;
+        float f = state.getDestroySpeed(world, pos);
+        int i = player.hasCorrectToolForDrops(state) ? 30 : 100;
+        float result = player.getDestroySpeed(state) / f / (float)i;
         int ticksToBreak = (int) Math.ceil(1.0f / result);
         
-        System.out.println("Player "+player.getEntityName()
+        System.out.println("Player "+player.getScoreboardName()
                 +" is breaking a block, tool effectivity "+ i
                 +" block breaking speed "+result
                 +" hardness "+f
-                +" final result "+player.getBlockBreakingSpeed(state) / f / (float)i
+                +" final result "+player.getDestroySpeed(state) / f / (float)i
                 +" expect break after "+ticksToBreak+" ticks"
         );
     }

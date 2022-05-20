@@ -1,20 +1,20 @@
 package de.guntram.mcmod.easierchests.mixins;
 
 
-import net.minecraft.inventory.Inventory;
+import de.guntram.mcmod.easierchests.InventoryExporter;
+import net.minecraft.world.Container;
+import net.minecraft.world.inventory.ShulkerBoxMenu;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import de.guntram.mcmod.easierchests.InventoryExporter;
-import net.minecraft.screen.ShulkerBoxScreenHandler;
 
-@Mixin(ShulkerBoxScreenHandler.class)
+@Mixin(ShulkerBoxMenu.class)
 public class ShulkerBoxInventoryMixin implements InventoryExporter {
 
-    @Shadow @Final private Inventory inventory;
+    @Shadow @Final private Container container;
     
     @Override
-    public Inventory getInventory() {
-        return inventory;
+    public Container getInventory() {
+        return container;
     }
 }

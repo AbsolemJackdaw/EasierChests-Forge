@@ -1,24 +1,24 @@
 package de.guntram.mcmod.easierchests;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import de.guntram.mcmod.easierchests.interfaces.SlotClicker;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.EnchantedBookItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtList;
-import net.minecraft.screen.GenericContainerScreenHandler;
-import net.minecraft.screen.ShulkerBoxScreenHandler;
-import net.minecraft.screen.slot.SlotActionType;
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.Container;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.ChestMenu;
+import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ShulkerBoxMenu;
+import net.minecraft.world.item.EnchantedBookItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 /*
  * Warning - this code should extend ContainerScreen54 AND ShulkerBoxScreen,
@@ -26,27 +26,27 @@ import net.minecraft.util.Identifier;
  * that are in those classes (and are identical ...) ourselves. Doh.
  */
 
-public class ExtendedGuiChest extends HandledScreen
+public class ExtendedGuiChest extends AbstractContainerScreen
 {
     private final int inventoryRows;
-    public static final Identifier ICONS=new Identifier(EasierChests.MODID, "textures/icons.png");
-    private final Identifier background;
+    public static final ResourceLocation ICONS=new ResourceLocation(EasierChests.MODID, "textures/icons.png");
+    private final ResourceLocation background;
     private final boolean separateBlits;
     
-    public ExtendedGuiChest(GenericContainerScreenHandler container, PlayerInventory lowerInv, Text title,
+    public ExtendedGuiChest(ChestMenu container, Inventory lowerInv, Component title,
             int rows)
     {
         super(container, lowerInv, title);
         this.inventoryRows=rows;
-        backgroundHeight = 114 + rows * 18;
-        background = new Identifier("minecraft", "textures/gui/container/generic_54.png");
+        imageHeight = 114 + rows * 18;
+        background = new ResourceLocation("minecraft", "textures/gui/container/generic_54.png");
         separateBlits=true;
     }
     
-    public ExtendedGuiChest(ShulkerBoxScreenHandler container, PlayerInventory lowerInv, Text title) {
+    public ExtendedGuiChest(ShulkerBoxMenu container, Inventory lowerInv, Component title) {
         super(container, lowerInv, title);
         inventoryRows = 3;
-        background = new Identifier("minecraft", "textures/gui/container/shulker_box.png");
+        background = new ResourceLocation("minecraft", "textures/gui/container/shulker_box.png");
         separateBlits=false;
     }
     
@@ -56,99 +56,99 @@ public class ExtendedGuiChest extends HandledScreen
     }
 
     @Override
-    public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks)
+    public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks)
     {
         renderBackground(stack);
         super.render(stack, mouseX, mouseY, partialTicks);
-        drawMouseoverTooltip(stack, mouseX, mouseY);
+        renderTooltip(stack, mouseX, mouseY);
     }
 
     @Override
-    protected void drawForeground(MatrixStack stack, int mouseX, int mouseY)
+    protected void renderLabels(PoseStack stack, int mouseX, int mouseY)
     {
-        this.textRenderer.draw(stack, this.title.getString(), 8.0F, 6.0F, 4210752);
-        this.textRenderer.draw(stack, this.playerInventoryTitle, 8.0F, (float)(this.backgroundHeight - 96 + 2), 4210752);
+        this.font.draw(stack, this.title.getString(), 8.0F, 6.0F, 4210752);
+        this.font.draw(stack, this.playerInventoryTitle, 8.0F, (float)(this.imageHeight - 96 + 2), 4210752);
     }
 
     /*
      * Draws the background layer of this container (behind the items).
      */
     @Override
-    protected void drawBackground(MatrixStack stack, float partialTicks, int mouseX, int mouseY)
+    protected void renderBg(PoseStack stack, float partialTicks, int mouseX, int mouseY)
     {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, background);
         if (separateBlits) {
-            this.drawTexture(stack, x, y, 0, 0, this.backgroundWidth, this.inventoryRows * 18 + 17);
-            this.drawTexture(stack, x, y + this.inventoryRows * 18 + 17, 0, 126, this.backgroundWidth, 96);
+            this.blit(stack, leftPos, topPos, 0, 0, this.imageWidth, this.inventoryRows * 18 + 17);
+            this.blit(stack, leftPos, topPos + this.inventoryRows * 18 + 17, 0, 126, this.imageWidth, 96);
         } else {
-            this.drawTexture(stack, x, y, 0, 0, this.backgroundWidth, this.backgroundHeight);
+            this.blit(stack, leftPos, topPos, 0, 0, this.imageWidth, this.imageHeight);
         }
     }
     
-    public static void drawChestInventoryBroom(MatrixStack stack, HandledScreen screen, int x, int y, int mouseX, int mouseY) {
+    public static void drawChestInventoryBroom(PoseStack stack, AbstractContainerScreen screen, int x, int y, int mouseX, int mouseY) {
         RenderSystem.setShaderTexture(0, ICONS);
         drawTexturedModalRectWithMouseHighlight(screen, stack, x, y, 11*18, 0*18, 18, 18, mouseX, mouseY);
-        myTooltip(screen, stack, x, y,  18, 18, mouseX, mouseY, new TranslatableText("easierchests.sortchest"));
+        myTooltip(screen, stack, x, y,  18, 18, mouseX, mouseY, new TranslatableComponent("easierchests.sortchest"));
     }
     
-    public static void drawChestInventoryAllDown(MatrixStack stack, HandledScreen screen, int x, int y, int mouseX, int mouseY) {
+    public static void drawChestInventoryAllDown(PoseStack stack, AbstractContainerScreen screen, int x, int y, int mouseX, int mouseY) {
         RenderSystem.setShaderTexture(0, ICONS);
         drawTexturedModalRectWithMouseHighlight(screen, stack, x, y, 0 *18, 2*18, 18, 18, mouseX, mouseY);
-        myTooltip(screen, stack, x, y, 18, 18, mouseX, mouseY, new TranslatableText("easierchests.matchdown"));
+        myTooltip(screen, stack, x, y, 18, 18, mouseX, mouseY, new TranslatableComponent("easierchests.matchdown"));
     }
 
-    public static void drawPlayerInventoryBroom(MatrixStack stack, HandledScreen screen, int x, int y, int mouseX, int mouseY) {
+    public static void drawPlayerInventoryBroom(PoseStack stack, AbstractContainerScreen screen, int x, int y, int mouseX, int mouseY) {
         RenderSystem.setShaderTexture(0, ICONS);
         drawTexturedModalRectWithMouseHighlight(screen, stack, x, y, 11*18, 0*18, 18, 18, mouseX, mouseY);
-        myTooltip(screen, stack, x, y, 18, 18, mouseX, mouseY, new TranslatableText("easierchests.sortplayer"));
+        myTooltip(screen, stack, x, y, 18, 18, mouseX, mouseY, new TranslatableComponent("easierchests.sortplayer"));
     }
     
-    public static void drawPlayerInventoryAllUp(MatrixStack stack, HandledScreen screen, int x, int y, int mouseX, int mouseY) {
+    public static void drawPlayerInventoryAllUp(PoseStack stack, AbstractContainerScreen screen, int x, int y, int mouseX, int mouseY) {
         RenderSystem.setShaderTexture(0, ICONS);
         drawTexturedModalRectWithMouseHighlight(screen, stack, x, y,  8*18, 2*18, 18, 18, mouseX, mouseY);
-        myTooltip(screen, stack, x, y, 18, 18, mouseX, mouseY, new TranslatableText("easierchests.matchup"));
+        myTooltip(screen, stack, x, y, 18, 18, mouseX, mouseY, new TranslatableComponent("easierchests.matchup"));
     }
 
-    public static void drawTexturedModalRectWithMouseHighlight(HandledScreen screen, MatrixStack stack, int screenx, int screeny, int textx, int texty, int sizex, int sizey, int mousex, int mousey) {
+    public static void drawTexturedModalRectWithMouseHighlight(AbstractContainerScreen screen, PoseStack stack, int screenx, int screeny, int textx, int texty, int sizex, int sizey, int mousex, int mousey) {
         if (mousex >= screenx && mousex < screenx+sizex && mousey >= screeny && mousey < screeny+sizey) {
             RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-            screen.drawTexture(stack, screenx, screeny, textx, texty, sizex, sizey);
+            screen.blit(stack, screenx, screeny, textx, texty, sizex, sizey);
         } else {
-            if (ConfigurationHandler.toneDownButtons()) {
+            if (ConfigurationHandler.getInstance().transparent()) {
                 RenderSystem.enableBlend();
                 RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 0.3f);
             }
-            if (ConfigurationHandler.halfSizeButtons()) {
-                MatrixStack stack2 = RenderSystem.getModelViewStack();
-                stack2.push();
+            if (ConfigurationHandler.getInstance().halfSizeButtons()) {
+                PoseStack stack2 = RenderSystem.getModelViewStack();
+                stack2.pushPose();
                 stack2.scale(0.5f, 0.5f, 0.5f);
                 RenderSystem.applyModelViewMatrix();
-                screen.drawTexture(stack, screenx*2+sizex/2, screeny*2+sizey/2, textx, texty, sizex, sizey);
-                stack2.pop();
+                screen.blit(stack, screenx*2+sizex/2, screeny*2+sizey/2, textx, texty, sizex, sizey);
+                stack2.popPose();
                 RenderSystem.applyModelViewMatrix();
             }
             else {
-                screen.drawTexture(stack, screenx, screeny, textx, texty, sizex, sizey);
+                screen.blit(stack, screenx, screeny, textx, texty, sizex, sizey);
             }
         }
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
     }
 
-    private static void myTooltip(HandledScreen screen, MatrixStack stack, int screenx, int screeny, int sizex, int sizey, int mousex, int mousey, Text tooltip) {
+    private static void myTooltip(AbstractContainerScreen screen, PoseStack stack, int screenx, int screeny, int sizex, int sizey, int mousex, int mousey, Component tooltip) {
         if (tooltip!=null && mousex>=screenx && mousex<=screenx+sizex && mousey>=screeny && mousey <= screeny+sizey) {
             screen.renderTooltip(stack, tooltip, mousex, mousey);
         }
     }
 
-    public static void sortInventory(SlotClicker screen, boolean isChest, Inventory inv) {
-        int size=isChest ? inv.size() : 36;     // player's Inventory has 41 items which includes armor and left hand, but we don't want these.
-        if (size>9*6 && !ConfigurationHandler.allowExtraLargeChests())
+    public static void sortInventory(SlotClicker screen, boolean isChest, Container inv) {
+        int size=isChest ? inv.getContainerSize() : 36;     // player's Inventory has 41 items which includes armor and left hand, but we don't want these.
+        if (size>9*6 && !ConfigurationHandler.getInstance().largeChests());
             size=9*6;
         for (int toSlot=0; toSlot<size; toSlot++) {
-            ItemStack toStack=inv.getStack(toSlot);
-            String targetItemName=toStack.getTranslationKey();
+            ItemStack toStack=inv.getItem(toSlot);
+            String targetItemName=toStack.getDescriptionId();
             if (toStack.getItem() == Items.AIR) {
                 if (!isChest && toSlot<9)
                     continue;                   // Don't move stuff into empty player hotbar slots
@@ -162,17 +162,17 @@ public class ExtendedGuiChest extends HandledScreen
                 for (int fromSlot=toSlot+1; fromSlot<size; fromSlot++) {
                     if (!isChest && !hasShiftDown()&& FrozenSlotDatabase.isSlotFrozen(fromSlot))
                         continue;
-                    ItemStack slotStack=inv.getStack(fromSlot);
+                    ItemStack slotStack=inv.getItem(fromSlot);
                     if (slotStack.getItem()==Items.AIR)
                         continue;
-                    String slotItem=inv.getStack(fromSlot).getTranslationKey();
+                    String slotItem=inv.getItem(fromSlot).getDescriptionId();
                     if (slotItem.compareToIgnoreCase(targetItemName)<0) {
                         targetItemName=slotItem;
                     }
                 }
             } else {
                 // Hotbar slots: allow filling them up but not replacing armor/weapon
-                if (toStack.getCount() >= toStack.getMaxCount()) {
+                if (toStack.getCount() >= toStack.getMaxStackSize()) {
                     continue;
                 }
             }
@@ -187,40 +187,40 @@ public class ExtendedGuiChest extends HandledScreen
                         continue;
                     }
                 }
-                toStack=inv.getStack(toSlot);
-                ItemStack fromStack=inv.getStack(fromSlot);
-                if (fromStack.getTranslationKey().equals(targetItemName)
-                &&  (!toStack.getTranslationKey().equals(targetItemName)
+                toStack=inv.getItem(toSlot);
+                ItemStack fromStack=inv.getItem(fromSlot);
+                if (fromStack.getDescriptionId().equals(targetItemName)
+                &&  (!toStack.getDescriptionId().equals(targetItemName)
                     ||    stackShouldGoBefore(fromStack, toStack))) {
-                    screen.EasierChests$onMouseClick (null, isChest ? fromSlot : screen.EasierChests$slotIndexfromPlayerInventoryIndex(fromSlot), 0, SlotActionType.PICKUP);
-                    screen.EasierChests$onMouseClick (null, isChest ? toSlot   : screen.EasierChests$slotIndexfromPlayerInventoryIndex(toSlot)  , 0, SlotActionType.PICKUP);
-                    screen.EasierChests$onMouseClick (null, isChest ? fromSlot : screen.EasierChests$slotIndexfromPlayerInventoryIndex(fromSlot), 0, SlotActionType.PICKUP);                    
+                    screen.EasierChests$onMouseClick (null, isChest ? fromSlot : screen.EasierChests$slotIndexfromPlayerInventoryIndex(fromSlot), 0, ClickType.PICKUP);
+                    screen.EasierChests$onMouseClick (null, isChest ? toSlot   : screen.EasierChests$slotIndexfromPlayerInventoryIndex(toSlot)  , 0, ClickType.PICKUP);
+                    screen.EasierChests$onMouseClick (null, isChest ? fromSlot : screen.EasierChests$slotIndexfromPlayerInventoryIndex(fromSlot), 0, ClickType.PICKUP);                    
                 }
             }
         }
     }
     
     private static boolean stackShouldGoBefore(ItemStack replacement, ItemStack original) {
-        String replacementName = replacement.getName().getString();
-        String originalName    = original.getName().getString();
+        String replacementName = replacement.getHoverName().getString();
+        String originalName    = original.getHoverName().getString();
         // alphabetically by display name
         
         if (replacementName.compareToIgnoreCase(originalName) > 0) {
             return false;
         }
         // if both damageable (same item name ...) then less damage before more damage
-        if (replacement.isDamageable() && original.isDamageable()
-        &&  replacement.getDamage() > original.getDamage()) {
+        if (replacement.isDamageableItem() && original.isDamageableItem()
+        &&  replacement.getDamageValue() > original.getDamageValue()) {
             return false;
         }
         // less enchantments before more enchantments
-        NbtList originalEnchantments = (original.getItem() == Items.ENCHANTED_BOOK) ? EnchantedBookItem.getEnchantmentNbt(original) : original.getEnchantments();
-        NbtList replacementEnchantments = (replacement.getItem() == Items.ENCHANTED_BOOK) ? EnchantedBookItem.getEnchantmentNbt(replacement) : replacement.getEnchantments();
+        ListTag originalEnchantments = (original.getItem() == Items.ENCHANTED_BOOK) ? EnchantedBookItem.getEnchantments(original) : original.getEnchantmentTags();
+        ListTag replacementEnchantments = (replacement.getItem() == Items.ENCHANTED_BOOK) ? EnchantedBookItem.getEnchantments(replacement) : replacement.getEnchantmentTags();
         if (replacementEnchantments == null || replacementEnchantments.isEmpty()) {
             if (originalEnchantments == null || originalEnchantments.isEmpty()) {
                 // Items are equal - same item type, same display name, no enchantments.
                 // Try to merge them, but only if the original ItemStack isn't full.
-                return original.getCount() != original.getMaxCount();
+                return original.getCount() != original.getMaxStackSize();
             }
             return true;
         }
@@ -231,8 +231,8 @@ public class ExtendedGuiChest extends HandledScreen
             return true;
         } else if (replacementEnchantments.size() == originalEnchantments.size()) {
             for (int i=0; i<replacementEnchantments.size(); i++) {
-                String originalId = ((NbtCompound)originalEnchantments.get(i)).getString("id");
-                String replacementId = ((NbtCompound)replacementEnchantments.get(i)).getString("id");
+                String originalId = ((CompoundTag)originalEnchantments.get(i)).getString("id");
+                String replacementId = ((CompoundTag)replacementEnchantments.get(i)).getString("id");
                 int compared = originalId.compareTo(replacementId);
 
                 if (compared < 0) {
@@ -240,8 +240,8 @@ public class ExtendedGuiChest extends HandledScreen
                 } else if (compared > 0) {
                     return true;
                 }
-                int originalLevel = ((NbtCompound)originalEnchantments.get(i)).getInt("lvl");
-                int replacementLevel = ((NbtCompound)replacementEnchantments.get(i)).getInt("lvl");
+                int originalLevel = ((CompoundTag)originalEnchantments.get(i)).getInt("lvl");
+                int replacementLevel = ((CompoundTag)replacementEnchantments.get(i)).getInt("lvl");
                 if (originalLevel == replacementLevel) {
                     continue;
                 }
@@ -253,29 +253,29 @@ public class ExtendedGuiChest extends HandledScreen
         }
     }
     
-    public static void moveMatchingItems(HandledScreen screen, boolean isChestToPlayer) {
+    public static void moveMatchingItems(AbstractContainerScreen screen, boolean isChestToPlayer) {
         // System.out.println("move matching from "+(isChest ? "chest" : "player"));
-        Inventory from, to;
+        Container from, to;
         int fromSize, toSize;
-        MinecraftClient minecraft = MinecraftClient.getInstance();
-        Inventory containerInventory = screen.getScreenHandler().getSlot(0).inventory;
+        Minecraft minecraft = Minecraft.getInstance();
+        Container containerInventory = screen.getMenu().getSlot(0).container;
 
         // use 36 for player inventory size so we won't use armor/2h slots
         if (isChestToPlayer) {
-            from = containerInventory;                  fromSize=from.size();
+            from = containerInventory;                  fromSize=from.getContainerSize();
             to   = minecraft.player.getInventory();     toSize  =36;
         } else {
             from = minecraft.player.getInventory();     fromSize=36;
-            to   = containerInventory;                  toSize  =to.size();
+            to   = containerInventory;                  toSize  =to.getContainerSize();
         }
-        if (!ConfigurationHandler.allowExtraLargeChests()) {
+        if (!ConfigurationHandler.getInstance().largeChests()) {
             if (fromSize>9*6)   fromSize=9*6;
             if (toSize  >9*6)   toSize=9*6;
         }
         for (int i=0; i<fromSize; i++) {
             if (!isChestToPlayer && !hasShiftDown() && FrozenSlotDatabase.isSlotFrozen(i))
                 continue;
-            ItemStack fromStack = from.getStack(i);
+            ItemStack fromStack = from.getItem(i);
             int slot;
             if (isChestToPlayer) {
                 slot=i;
@@ -283,11 +283,11 @@ public class ExtendedGuiChest extends HandledScreen
                 slot=((SlotClicker)screen).EasierChests$slotIndexfromPlayerInventoryIndex(i);
             }
             for (int j=0; j<toSize; j++) {
-                ItemStack toStack = to.getStack(j);
-                if (fromStack.isItemEqual(toStack)
-                &&  ItemStack.areNbtEqual(fromStack, toStack)) {
+                ItemStack toStack = to.getItem(j);
+                if (fromStack.sameItemStackIgnoreDurability(toStack)
+                &&  ItemStack.tagMatches(fromStack, toStack)) {
                     // System.out.println("  from["+i+"] is same as to["+j+"] ("+toStack.getDisplayName()+"), clicking "+slot);
-                    ((SlotClicker)screen).EasierChests$onMouseClick(null, slot, 0, SlotActionType.QUICK_MOVE);
+                    ((SlotClicker)screen).EasierChests$onMouseClick(null, slot, 0, ClickType.QUICK_MOVE);
                 }
             }
         }

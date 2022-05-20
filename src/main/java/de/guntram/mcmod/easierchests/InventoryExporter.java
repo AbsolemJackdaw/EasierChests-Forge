@@ -1,7 +1,7 @@
 package de.guntram.mcmod.easierchests;
 
-import net.minecraft.inventory.Inventory;
+import net.minecraft.world.Container;
 
 public interface InventoryExporter {
-    public Inventory getInventory();
+    public Container getInventory();
 }

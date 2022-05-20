@@ -1,11 +1,11 @@
 package de.guntram.mcmod.debug.mixins;
 
-import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.client.multiplayer.ClientPacketListener;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.Mixin;
 
-@Mixin(ClientPlayNetworkHandler.class)
+@Mixin(ClientPacketListener.class)
 public class GuiActionConfirmDebugMixin {
     
     static private final Logger LOGGER = LogManager.getLogger();
