@@ -8,10 +8,11 @@ issueTrackerURL="https://github.com/CorgiTaco/EasierChests-Forge/issues" #option
 modId="easierchests" #mandatory
 version="${file.jarVersion}" #mandatory
 displayName="EasierChests" #mandatory
+
 #updateJSONURL="https://change.me.example.invalid/updates.json" #optional
 #displayURL="https://change.me.to.your.mods.homepage.example.invalid/" #optional
 logoFile="icon.png" #optional
-credits="Corgi Taco - Forge Port" #optional
+credits="Corgi Taco - Forge Port , AbsolemJackdaw : maintainer" #optional
 authors="Giselbaer" #optional
 description='''
 Move stuff between inventory and chests, and sort them
@@ -28,3 +29,4 @@ Move stuff between inventory and chests, and sort them
     versionRange="[1.18.2,1.19)"
     ordering="NONE"
     side="CLIENT"
+
