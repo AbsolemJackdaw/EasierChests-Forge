@@ -26,7 +26,7 @@ Move stuff between inventory and chests, and sort them
 [[dependencies.easierchests]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.18.2,1.19)"
+    versionRange="[1.19,)"
     ordering="NONE"
     side="CLIENT"
 

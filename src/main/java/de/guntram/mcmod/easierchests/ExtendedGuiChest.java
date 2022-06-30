@@ -9,7 +9,6 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
@@ -90,25 +89,25 @@ public class ExtendedGuiChest extends AbstractContainerScreen
     public static void drawChestInventoryBroom(PoseStack stack, AbstractContainerScreen screen, int x, int y, int mouseX, int mouseY) {
         RenderSystem.setShaderTexture(0, ICONS);
         drawTexturedModalRectWithMouseHighlight(screen, stack, x, y, 11*18, 0*18, 18, 18, mouseX, mouseY);
-        myTooltip(screen, stack, x, y,  18, 18, mouseX, mouseY, new TranslatableComponent("easierchests.sortchest"));
+        myTooltip(screen, stack, x, y,  18, 18, mouseX, mouseY, Component.translatable("easierchests.sortchest"));
     }
     
     public static void drawChestInventoryAllDown(PoseStack stack, AbstractContainerScreen screen, int x, int y, int mouseX, int mouseY) {
         RenderSystem.setShaderTexture(0, ICONS);
         drawTexturedModalRectWithMouseHighlight(screen, stack, x, y, 0 *18, 2*18, 18, 18, mouseX, mouseY);
-        myTooltip(screen, stack, x, y, 18, 18, mouseX, mouseY, new TranslatableComponent("easierchests.matchdown"));
+        myTooltip(screen, stack, x, y, 18, 18, mouseX, mouseY, Component.translatable("easierchests.matchdown"));
     }
 
     public static void drawPlayerInventoryBroom(PoseStack stack, AbstractContainerScreen screen, int x, int y, int mouseX, int mouseY) {
         RenderSystem.setShaderTexture(0, ICONS);
         drawTexturedModalRectWithMouseHighlight(screen, stack, x, y, 11*18, 0*18, 18, 18, mouseX, mouseY);
-        myTooltip(screen, stack, x, y, 18, 18, mouseX, mouseY, new TranslatableComponent("easierchests.sortplayer"));
+        myTooltip(screen, stack, x, y, 18, 18, mouseX, mouseY, Component.translatable("easierchests.sortplayer"));
     }
     
     public static void drawPlayerInventoryAllUp(PoseStack stack, AbstractContainerScreen screen, int x, int y, int mouseX, int mouseY) {
         RenderSystem.setShaderTexture(0, ICONS);
         drawTexturedModalRectWithMouseHighlight(screen, stack, x, y,  8*18, 2*18, 18, 18, mouseX, mouseY);
-        myTooltip(screen, stack, x, y, 18, 18, mouseX, mouseY, new TranslatableComponent("easierchests.matchup"));
+        myTooltip(screen, stack, x, y, 18, 18, mouseX, mouseY, Component.translatable("easierchests.matchup"));
     }
 
     public static void drawTexturedModalRectWithMouseHighlight(AbstractContainerScreen screen, PoseStack stack, int screenx, int screeny, int textx, int texty, int sizex, int sizey, int mousex, int mousey) {

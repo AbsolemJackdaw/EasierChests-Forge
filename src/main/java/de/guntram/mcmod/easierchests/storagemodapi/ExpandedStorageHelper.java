@@ -1,7 +1,7 @@
 package de.guntram.mcmod.easierchests.storagemodapi;
 
+import ellemes.container_library.api.client.gui.AbstractScreen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import ninjaphenix.container_library.api.client.gui.AbstractScreen;
 import org.apache.logging.log4j.LogManager;
 
 import java.lang.reflect.Field;

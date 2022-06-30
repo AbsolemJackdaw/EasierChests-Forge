@@ -15,7 +15,7 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.resources.language.I18n;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -148,7 +148,7 @@ public abstract class AbstractContainerScreenMixin extends Screen implements Slo
 
             if (ConfigurationHandler.getInstance().enableSearch()) {
                 if (searchWidget == null) {
-                    searchWidget = new EditBox(font, leftPos + imageWidth - 85, topPos + 3, 80, 12, new TextComponent("Search"));
+                    searchWidget = new EditBox(font, leftPos + imageWidth - 85, topPos + 3, 80, 12, Component.literal("Search"));
                 } else {
                     searchWidget.x = leftPos + imageWidth - 85;
                     searchWidget.y = topPos + 3;
