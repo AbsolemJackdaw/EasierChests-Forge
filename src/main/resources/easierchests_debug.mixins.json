@@ -1,13 +1,16 @@
 {
-    "required": false,
-    "package": "de.guntram.mcmod.debug.mixins",
-    "minVersion": "0.6",
-    "refmap": "easierchests.refmap.json",
-    "client-disabled": [
-        "ClickWindowC2SPacketDebugMixin",
-        "GuiActionConfirmDebugMixin"
-    ],
-    "injectors": {
-        "defaultRequire": 1
-    }
+  "required": false,
+  "package": "de.guntram.mcmod.debug.mixins",
+  "minVersion": "0.6",
+  "refmap": "easierchests.refmap.json",
+  "client-disabled": [
+    "ClickWindowC2SPacketDebugMixin",
+    "GuiActionConfirmDebugMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "mixins": [
+    "ClickWindowC2SPacketDebugMixin"
+  ]
 }

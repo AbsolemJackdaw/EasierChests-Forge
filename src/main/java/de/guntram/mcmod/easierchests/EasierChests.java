@@ -1,5 +1,6 @@
 package de.guntram.mcmod.easierchests;
 
+import de.guntram.mcmod.easierchests.mixins.AbstractContainerScreenMixin;
 import de.guntram.mcmod.easierchests.storagemodapi.ChestGuiInfo;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -19,8 +20,7 @@ import java.util.HashMap;
 
 @Mod(EasierChests.MODID)
 public class EasierChests {
-    static final String MODID = "easierchests";
-    static final String MODNAME = "EasierChests";
+    public static final String MODID = "easierchests";
 
     private static final String category = "key.categories.easierchests";
 
@@ -73,6 +73,7 @@ public class EasierChests {
         registerMod("inmis", "draylar.inmis.ui.BackpackScreenHandler", "de.guntram.mcmod.easierchests.storagemodapi.InmisHelper");
         registerMod("Reinforced", "atonkish.reinfcore.screen.ReinforcedStorageScreenHandler", "de.guntram.mcmod.easierchests.storagemodapi.ReinforcedHelper");
         registerMod("Expanded Storage", "ninjaphenix.container_library.api.inventory.AbstractHandler", "de.guntram.mcmod.easierchests.storagemodapi.ExpandedStorageHelper");
+        registerMod("Sophisticated Backpacks", "net.p3pp3rf1y.sophisticatedbackpacks.common.gui.BackpackContainer", "de.guntram.mcmod.easierchests.storagemodapi.SophisticatedbackpacksHelper");
     }
 
     private KeyMapping registerKey(String key, int code) {

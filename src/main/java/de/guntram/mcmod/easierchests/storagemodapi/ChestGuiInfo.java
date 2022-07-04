@@ -14,4 +14,7 @@ public interface ChestGuiInfo {
     public int getRows(AbstractContainerScreen<?> handler);
 
     public int getColumns(AbstractContainerScreen<?> handler);
+    public int getRowsAll(AbstractContainerScreen<?> handler);
+
+    public int getArrowOffset();
 }

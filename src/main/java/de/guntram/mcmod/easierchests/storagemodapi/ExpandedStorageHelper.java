@@ -36,10 +36,20 @@ public class ExpandedStorageHelper implements ChestGuiInfo {
         }
     }
 
+    @Override
+    public int getRowsAll(AbstractContainerScreen<?> handler) {
+        return getRows(handler);
+    }
+
     private void warnOutdated(String what) {
         if (!warnedOutdated) {
             LogManager.getLogger(this.getClass()).warn("You need a current version of " + what + ", trying to fall back");
             warnedOutdated = true;
         }
+    }
+
+    @Override
+    public int getArrowOffset() {
+        return 0;
     }
 }

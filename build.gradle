@@ -16,7 +16,7 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = "${mod_version}"
+version = "beta-${mod_version}"
 group = "guntram.${modid}" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "${modid}"
 
@@ -66,6 +66,13 @@ repositories {
             includeGroup "maven.modrinth"
         }
     }
+    maven {
+        name = 'Curse Maven'
+        url = 'https://cursemaven.com'
+        content {
+            includeGroup 'curse.maven'
+        }
+    }
 }
 
 dependencies {
@@ -74,6 +81,9 @@ dependencies {
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor' //Re-enable when building jar
 
     implementation fg.deobf("maven.modrinth:ellemes-container-library:1.4.0-beta.2+forge")
+    implementation fg.deobf("curse.maven:sophisticated-core-618298:3847441")
+    implementation fg.deobf("curse.maven:sophisticated-backpacks-422301:3847503")
+
     //compileOnly files('/atonkish.reinfcore:reinforced-core:1.1.0');
     //compileOnly files('/home/gbl/SoftwareProjects/GitClones/MinecraftMods/inmis/build/libs/inmis-2.3.2-1.17.1-dev.jar');
     //compileOnly files('/home/gbl/SoftwareProjects/GitClones/MinecraftMods/container-library/build/fabric/libs/ninjaphenix-container-library-1.2.2+1.17.1-dev.jar');
