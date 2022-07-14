@@ -16,7 +16,7 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = "beta-${mod_version}"
+version = "${mod_version}-beta"
 group = "guntram.${modid}" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "${modid}"
 
@@ -80,7 +80,7 @@ dependencies {
 
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor' //Re-enable when building jar
 
-    implementation fg.deobf("maven.modrinth:ellemes-container-library:1.4.0-beta.2+forge")
+    implementation fg.deobf("curse.maven:ellemes-container-library1.4.0-beta.2+forge-530668:3813786")
     implementation fg.deobf("curse.maven:sophisticated-core-618298:3847441")
     implementation fg.deobf("curse.maven:sophisticated-backpacks-422301:3847503")
 
